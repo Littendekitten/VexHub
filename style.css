@@ -225,3 +225,18 @@ h1, h2, h3, p { overflow-wrap: break-word; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 
 body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+
+/* SUNSET STRIKE 3D — first playable Vexuno original */
+.sunset-featured { border-color: rgba(255,155,105,.25); background: linear-gradient(115deg,#17151b,#111713 70%); }
+.sunset-cover { text-decoration:none; isolation:isolate; background:radial-gradient(ellipse at 54% 58%,rgba(255,139,97,.27),transparent 44%),linear-gradient(155deg,#30233a,#151629 57%,#11131e); }
+.sunset-cover::before { width:230px;height:130px;border-color:#ffb27c30;transform:rotateX(67deg) rotateZ(-18deg); }
+.sunset-cover::after { width:174px;height:100px;border-color:#ffb27c48;transform:rotateX(67deg) rotateZ(18deg); }
+.sunset-sun { position:absolute;top:25px;left:50%;width:76px;height:76px;transform:translateX(-50%);border-radius:50%;background:linear-gradient(180deg,#ffd49a,#fa7b79 70%,#a94f83);box-shadow:0 0 50px #ff986b66; }
+.sunset-horizon { position:absolute;left:0;right:0;bottom:32px;height:34px;background:repeating-linear-gradient(180deg,transparent 0 6px,#151528 7px 9px),linear-gradient(90deg,transparent,#fa9d7b55,transparent);border-top:1px solid #ffbf8c55; }
+.sunset-ship { position:absolute;left:50%;top:44%;z-index:2;transform:translate(-50%,-50%);color:#b8f9ef;font-size:38px;text-shadow:0 0 22px #79ffee,0 0 55px #ff926d; }
+.sunset-cover-title { position:absolute;left:17px;right:17px;bottom:17px;z-index:3;color:#fff;font:900 24px/.82 'Barlow Condensed',Impact,sans-serif;letter-spacing:.05em;text-shadow:0 2px 18px #080914; }
+.sunset-cover-title b { color:#ffad80; }
+.sunset-cover-title small { display:block;margin-top:7px;color:#e9c7b9;font:8px 'DM Mono',monospace;letter-spacing:.19em; }
+.sunset-cover .sunset-cover-number { position:absolute;right:13px;top:12px;color:#ffcca5aa;font:9px 'DM Mono',monospace;letter-spacing:.14em; }
+.launch-game-button { text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px; }
+@media(max-width:620px){.sunset-cover-title{font-size:25px}.sunset-sun{top:20px;width:70px;height:70px}}

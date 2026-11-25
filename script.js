@@ -2,12 +2,13 @@
   'use strict';
 
   const GAME = {
-    id: 'first-game',
-    title: 'First Game',
-    description: 'The first adventure from Vexuno Studio is on its way. Get ready to explore a brand-new world.',
-    release: 'DEC 02',
-    status: 'UPCOMING RELEASE',
-    tags: ['VEXUNO ORIGINAL', 'RELEASE: DEC 02', 'COMING SOON']
+    id: 'sunset-strike-3d',
+    title: 'SUNSET STRIKE 3D',
+    description: 'Defend the Sunset Frontier in Vexuno Studio’s first arcade space shooter. Pilot your interceptor, clear hostile waves, and take down the flagship.',
+    release: '0.1 BETA',
+    status: 'AVAILABLE NOW · 0.1 BETA',
+    tags: ['VEXUNO ORIGINAL', '0.1 BETA', 'ARCADE SPACE SHOOTER'],
+    url: 'games/sunset-strike-3d/index.html'
   };
 
   const storage = {
@@ -55,11 +56,15 @@
   function gameCard() {
     const saved = isFavorite();
     return `
-      <article class="featured-card">
-        <div class="game-cover" aria-label="Abstract Vexuno game artwork">
+      <article class="featured-card sunset-featured">
+        <a class="game-cover sunset-cover" href="${GAME.url}" aria-label="Play ${GAME.title}">
           <span class="cover-stamp">VEXUNO ORIGINAL / 001</span>
-          <span class="cover-v" aria-hidden="true">V.</span>
-        </div>
+          <span class="sunset-sun" aria-hidden="true"></span>
+          <span class="sunset-horizon" aria-hidden="true"></span>
+          <span class="sunset-ship" aria-hidden="true">✦</span>
+          <span class="sunset-cover-title">SUNSET <b>STRIKE</b><small>3D / FRONTIER ASSAULT</small></span>
+          <span class="sunset-cover-number">001</span>
+        </a>
         <div class="game-details">
           <p class="release-label">${GAME.status}</p>
           <h3>${GAME.title}</h3>
@@ -67,7 +72,7 @@
           <div class="game-tags">${GAME.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}</div>
         </div>
         <div class="game-action">
-          <button class="button button-disabled" type="button" disabled aria-label="${GAME.title} is coming soon">COMING SOON <span aria-hidden="true">↗</span></button>
+          <a class="button button-primary launch-game-button" href="${GAME.url}">PLAY NOW <span aria-hidden="true">↗</span></a>
           <button class="favorite-button ${saved ? 'saved' : ''}" data-action="favorite" type="button" aria-pressed="${saved}"><span class="heart" aria-hidden="true">${saved ? '♥' : '♡'}</span>${saved ? 'SAVED TO LIBRARY' : 'ADD TO LIBRARY'}</button>
         </div>
       </article>`;
@@ -78,7 +83,7 @@
       <section class="welcome-row">
         <div><p class="eyebrow"><span class="eyebrow-line"></span> YOUR VEXUNO SPACE</p>
           <h1>Welcome to <span>VexHub.</span></h1>
-          <p class="welcome-subtitle">One home for everything Vexuno. Find your next game, keep your favourites close, and stay in the loop.</p>
+          <p class="welcome-subtitle">One home for everything Vexuno. Launch SUNSET STRIKE 3D, keep your favourites close, and discover what’s next.</p>
         </div><div class="welcome-mark" aria-hidden="true">V<span>.</span></div>
       </section>
       <section class="hero-panel" aria-labelledby="hero-title">
@@ -87,7 +92,7 @@
           <div class="hero-tag"><span class="pulse-dot"></span> THE VEXUNO UNIVERSE</div>
           <p class="hero-overline">PLAY. EXPLORE. REPEAT.</p>
           <h2 id="hero-title">Your next<br /><span>adventure</span> starts here.</h2>
-          <p class="hero-description">Discover games made by Vexuno Studio. Your next favourite is just around the corner.</p>
+          <p class="hero-description">Your first mission is ready. Launch the Vexuno original, defend the frontier, and chase your personal best.</p>
           <div class="hero-actions"><button class="button button-primary" data-page="discover" type="button">Explore games <span aria-hidden="true">↗</span></button><button class="button button-quiet" data-page="library" type="button">Open library <span aria-hidden="true">→</span></button></div>
         </div>
         <div class="hero-art" aria-hidden="true"><div class="art-ring ring-one"></div><div class="art-ring ring-two"></div><div class="art-ring ring-three"></div><div class="art-core"><span>V</span></div><div class="art-spark spark-one"></div><div class="art-spark spark-two"></div><div class="art-spark spark-three"></div><div class="art-caption">VEXUNO<br /><span>STUDIO</span></div></div>
@@ -95,8 +100,8 @@
       </section>
       <section class="section-block"><div class="section-heading"><div><p class="eyebrow">HAND-PICKED BY VEXUNO</p><h2>In the spotlight</h2></div><button class="subtle-link" data-page="discover" type="button">View all <span aria-hidden="true">↗</span></button></div><div id="featured-game">${gameCard()}</div></section>
       <section class="bottom-grid">
-        <div class="section-card stats-card"><div class="card-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h3>Your space, at a glance</h3></div><span class="mini-icon">▦</span></div><div class="stats-grid"><div class="stat-item"><strong>01</strong><span>Games listed</span></div><div class="stat-item"><strong>${String(state.favorites.length).padStart(2, '0')}</strong><span>Favourites</span></div><div class="stat-item"><strong>00</strong><span>Installed</span></div></div></div>
-        <div class="section-card update-card"><div class="update-top"><span class="update-icon">✳</span><span class="update-label">FROM THE STUDIO</span></div><h3>Something new is taking shape.</h3><p>Vexuno is getting ready to bring its first game to the world. Keep an eye on this space.</p><button class="text-button" data-page="discover" type="button">See what's coming <span aria-hidden="true">↗</span></button></div>
+        <div class="section-card stats-card"><div class="card-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h3>Your space, at a glance</h3></div><span class="mini-icon">▦</span></div><div class="stats-grid"><div class="stat-item"><strong>01</strong><span>Games available</span></div><div class="stat-item"><strong>${String(state.favorites.length).padStart(2, '0')}</strong><span>Favourites</span></div><div class="stat-item"><strong>01</strong><span>Playable</span></div></div></div>
+        <div class="section-card update-card"><div class="update-top"><span class="update-icon">✳</span><span class="update-label">FROM THE STUDIO</span></div><h3>Your first mission is live.</h3><p>SUNSET STRIKE 3D is ready to play. Take control of your interceptor and defend the Sunset Frontier.</p><a class="text-button" href="games/sunset-strike-3d/index.html">Launch the game <span aria-hidden="true">↗</span></a></div>
       </section>
       ${footerTemplate()}`;
   }
@@ -107,7 +112,7 @@
 
   function discoverTemplate() {
     const found = `${GAME.title} ${GAME.description} ${GAME.tags.join(' ')}`.toLowerCase().includes(state.search.toLowerCase());
-    return `<header class="page-header"><p class="eyebrow">THE VEXUNO CATALOGUE</p><h1>Find your next <span>favourite.</span></h1><p>Explore games from Vexuno Studio. New worlds and experiences will appear here as they are announced.</p></header>
+    return `<header class="page-header"><p class="eyebrow">THE VEXUNO CATALOGUE</p><h1>Find your next <span>favourite.</span></h1><p>The Vexuno catalogue starts here. SUNSET STRIKE 3D is available now in its first 0.1 BETA build.</p></header>
       <div class="results-bar"><span>SHOWING <strong>${found ? '01' : '00'}</strong> OF 01 GAMES</span><span>${state.search ? `SEARCH: “${escapeHTML(state.search)}”` : 'LATEST RELEASES'}</span></div>
       ${found ? gameCard() : `<div class="empty-state"><div class="empty-symbol">⌕</div><h2>No games found</h2><p>We couldn't find a game matching “${escapeHTML(state.search)}”. Try another search.</p><button class="button button-primary" data-action="clear-search" type="button">Clear search</button></div>`}
       ${footerTemplate()}`;
@@ -115,9 +120,9 @@
 
   function libraryTemplate() {
     const hasSaved = isFavorite();
-    return `<header class="page-header"><p class="eyebrow">YOUR PERSONAL COLLECTION</p><h1>My <span>library.</span></h1><p>Your saved Vexuno games, all in one place. Favourites are stored on this device.</p></header>
+    return `<header class="page-header"><p class="eyebrow">YOUR PERSONAL COLLECTION</p><h1>My <span>library.</span></h1><p>Your saved Vexuno games, all in one place. Launch games straight from your library. Favourites are stored on this device.</p></header>
       <div class="results-bar"><span>SAVED GAMES <strong>${String(state.favorites.length).padStart(2, '0')}</strong></span><span>LOCAL COLLECTION</span></div>
-      ${hasSaved ? gameCard() : `<div class="empty-state"><div class="empty-symbol">＋</div><h2>Your library is waiting</h2><p>Save games you like and they'll show up here. Start by checking out what's coming from Vexuno Studio.</p><button class="button button-primary" data-page="discover" type="button">Discover games <span aria-hidden="true">↗</span></button></div>`}
+      ${hasSaved ? gameCard() : `<div class="empty-state"><div class="empty-symbol">＋</div><h2>Your library is waiting</h2><p>Save games you like and they'll show up here. Add SUNSET STRIKE 3D to your collection to keep it close.</p><button class="button button-primary" data-page="discover" type="button">Discover games <span aria-hidden="true">↗</span></button></div>`}
       ${footerTemplate()}`;
   }
 
