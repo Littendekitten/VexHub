@@ -31,13 +31,29 @@
     favorites: storage.read('favorites', []),
     profileName: storage.read('profileName', 'Player'),
     accent: storage.read('accent', 'green'),
-    reduceMotion: storage.read('reduceMotion', false)
+    reduceMotion: storage.read('reduceMotion', false),
+    soundEnabled: storage.read('soundEnabled', true),
+    soundVolume: storage.read('soundVolume', 0.78),
+    qualityMode: storage.read('qualityMode', 'auto'),
+    mods: storage.read('mangomod:mods:v1', [])
   };
 
   const pageContent = document.getElementById('page-content');
   const searchInput = document.getElementById('global-search');
   const toastRegion = document.getElementById('toast-region');
-  const pageLabels = { dashboard: 'DASHBOARD', discover: 'DISCOVER', library: 'MY LIBRARY', settings: 'SETTINGS' };
+  const pageLabels = { dashboard: 'DASHBOARD', discover: 'DISCOVER', library: 'MY LIBRARY', mods: 'MANGOMOD', settings: 'SETTINGS' };
+  const modImportInput = document.getElementById('mod-import-input');
+  const MOD_LIMIT_BYTES = 160000;
+  const sampleMod = {
+    id: 'mango-turbo-flight', name: 'Mango Turbo Flight', version: '1.0.0', author: 'VexHub',
+    description: 'A punchier flight setup for SUNSET STRIKE 3D: faster movement and a quicker cannon.',
+    target: ['sunset-strike-3d'], api: 'mangomod-1', enabled: true,
+    code: `MangoMod.on('game:ready', () => {
+  MangoMod.setSetting('playerSpeedMultiplier', 1.22);
+  MangoMod.setSetting('fireRateMultiplier', 1.16);
+  MangoMod.notify('Mango Turbo Flight loaded');
+});`
+  };
 
   function escapeHTML(value) {
     return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -52,6 +68,24 @@
   }
 
   function isFavorite() { return state.favorites.includes(GAME.id); }
+  function enabledModCount() { return state.mods.filter(mod => mod.enabled).length; }
+  function saveMods() { storage.write('mangomod:mods:v1', state.mods); updateShell(); }
+  function validModPackage(mod) {
+    if (!mod || typeof mod !== 'object') throw new Error('The mod file is not a valid package.');
+    const id = String(mod.id || '').trim().toLowerCase();
+    if (!/^[a-z0-9][a-z0-9-]{1,47}$/.test(id)) throw new Error('Mod IDs must use 2–48 lowercase letters, numbers, or hyphens.');
+    if (!String(mod.name || '').trim() || String(mod.name).length > 48) throw new Error('Give the mod a name (48 characters maximum).');
+    if (typeof mod.code !== 'string' || !mod.code.trim()) throw new Error('The package does not contain a JavaScript mod script.');
+    if (mod.code.length > 30000) throw new Error('Mod scripts are limited to 30 KB.');
+    const target = Array.isArray(mod.target) ? mod.target : [mod.target || '*'];
+    if (!target.length || target.length > 30 || target.some(item => typeof item !== 'string' || !/^(\*|[a-z0-9][a-z0-9-]{1,63})$/.test(item))) throw new Error('The target list is not valid. Use * for all MangoMod-enabled games.');
+    return {
+      id, name: String(mod.name).trim().slice(0, 48), version: String(mod.version || '1.0.0').slice(0, 20),
+      author: String(mod.author || 'Unknown creator').slice(0, 40), description: String(mod.description || 'No description provided.').slice(0, 180),
+      target, api: 'mangomod-1', code: mod.code, enabled: mod.enabled !== false, installedAt: Date.now()
+    };
+  }
+  function modTargetsLabel(mod) { return mod.target.includes('*') ? 'ALL MANGOMOD GAMES' : mod.target.join(', ').toUpperCase(); }
 
   function gameCard() {
     const saved = isFavorite();
@@ -76,6 +110,26 @@
           <button class="favorite-button ${saved ? 'saved' : ''}" data-action="favorite" type="button" aria-pressed="${saved}"><span class="heart" aria-hidden="true">${saved ? '♥' : '♡'}</span>${saved ? 'SAVED TO LIBRARY' : 'ADD TO LIBRARY'}</button>
         </div>
       </article>`;
+  }
+
+  function modCard(mod) {
+    const enabled = !!mod.enabled;
+    return `<article class="mod-card">
+      <div class="mod-card-top"><div class="mod-icon">M</div><div class="mod-title"><h3>${escapeHTML(mod.name)}</h3><p>v${escapeHTML(mod.version)} · by ${escapeHTML(mod.author)}</p></div><span class="mod-status ${enabled ? 'is-enabled' : ''}">${enabled ? 'ENABLED' : 'DISABLED'}</span></div>
+      <p class="mod-description">${escapeHTML(mod.description)}</p><div class="mod-target"><span>TARGET</span><strong>${escapeHTML(modTargetsLabel(mod))}</strong></div>
+      <div class="mod-card-actions"><button class="button ${enabled ? 'button-quiet' : 'button-primary'}" data-action="toggle-mod" data-mod-id="${escapeHTML(mod.id)}" type="button">${enabled ? 'Disable mod' : 'Enable mod'}</button><button class="mod-text-action" data-action="export-mod" data-mod-id="${escapeHTML(mod.id)}" type="button">Export</button><button class="mod-text-action danger-action" data-action="remove-mod" data-mod-id="${escapeHTML(mod.id)}" type="button">Remove</button></div>
+    </article>`;
+  }
+
+  function modsTemplate() {
+    const mods = state.mods.slice().sort((a, b) => Number(b.enabled) - Number(a.enabled) || String(a.name).localeCompare(String(b.name)));
+    return `<header class="page-header"><p class="eyebrow">THE COMMUNITY MOD LAYER</p><h1>Meet <span>MangoMod.</span></h1><p>Install, enable, disable, export, and manage mods for every game that integrates the MangoMod API. Your mod library stays in this browser.</p></header>
+      <section class="mango-hero"><div class="mango-orb">M</div><div class="mango-hero-copy"><span class="mango-kicker">MANGOMOD LAUNCHER · API 1</span><h2>Make every game <span>your game.</span></h2><p>Mods run in an isolated sandbox and can only use the game features exposed by its MangoMod adapter.</p></div><div class="mango-hero-actions"><button class="button button-primary" data-action="import-mod" type="button">＋ Import mod</button><button class="button button-quiet" data-action="install-sample" type="button">Install sample mod</button></div></section>
+      <div class="mod-stats"><div><strong>${mods.length.toString().padStart(2,'0')}</strong><span>INSTALLED</span></div><div><strong>${enabledModCount().toString().padStart(2,'0')}</strong><span>ENABLED</span></div><div><strong>API 1</strong><span>COMPATIBILITY</span></div></div>
+      <div class="mod-section-heading"><div><p class="eyebrow">YOUR LOCAL MOD LIBRARY</p><h2>Installed mods</h2></div><button class="subtle-link" data-action="export-all-mods" type="button">Export library ↗</button></div>
+      ${mods.length ? `<div class="mod-list">${mods.map(modCard).join('')}</div>` : `<div class="empty-state"><div class="empty-symbol">M</div><h2>No mods installed yet</h2><p>Import a MangoMod package or install the sample mod to see how the launcher works.</p><button class="button button-primary" data-action="install-sample" type="button">Install sample mod</button></div>`}
+      <section class="mod-docs"><p class="eyebrow">OPEN MODDING STANDARD</p><h3>Made for all games, not just one.</h3><p>MangoMod is a shared browser-game API. A game adds the MangoMod runtime and exposes supported hooks and settings. Mods marked <strong>All games</strong> can then load in every title that has integrated the MangoMod runtime and adapter.</p><a href="mangomod/README.md" target="_blank" rel="noopener">Read the mod developer guide ↗</a></section>
+      ${footerTemplate()}`;
   }
 
   function dashboardTemplate() {
@@ -133,8 +187,11 @@
           <div class="setting-row"><div><strong>Display name</strong><small>This is only a local profile, not an online account.</small></div><input class="setting-input" id="profile-name-input" maxlength="20" value="${escapeHTML(state.profileName)}" aria-label="Display name" /></div>
           <div class="setting-row"><div><strong>Accent colour</strong><small>Pick the colour used across your client.</small></div><div class="accent-options" role="group" aria-label="Accent colour"><button class="accent-choice ${state.accent === 'green' ? 'selected' : ''}" data-accent="green" type="button" aria-label="Green" aria-pressed="${state.accent === 'green'}"></button><button class="accent-choice ${state.accent === 'blue' ? 'selected' : ''}" data-accent="blue" type="button" aria-label="Blue" aria-pressed="${state.accent === 'blue'}"></button><button class="accent-choice ${state.accent === 'violet' ? 'selected' : ''}" data-accent="violet" type="button" aria-label="Violet" aria-pressed="${state.accent === 'violet'}"></button></div></div>
           <div class="setting-row"><div><strong>Reduced motion</strong><small>Limit decorative animations and transitions.</small></div><button class="toggle" data-action="motion" type="button" aria-label="Toggle reduced motion" aria-pressed="${state.reduceMotion}"></button></div>
+          <div class="setting-row"><div><strong>Game sound effects</strong><small>Default sound setting for MangoMod-ready games.</small></div><button class="toggle" data-action="sound" type="button" aria-label="Toggle game sound effects" aria-pressed="${state.soundEnabled}"></button></div>
+          <div class="setting-row volume-setting"><div><strong>Sound volume</strong><small>Saved on this device.</small></div><input id="sound-volume" type="range" min="0" max="1" step="0.01" value="${Number(state.soundVolume).toFixed(2)}" aria-label="Game sound volume" /></div>
+          <div class="setting-row"><div><strong>Graphics quality</strong><small>Auto adjusts resolution when frame rate drops.</small></div><select id="quality-mode" class="setting-select" aria-label="Graphics quality"><option value="auto" ${state.qualityMode === 'auto' ? 'selected' : ''}>Auto</option><option value="low" ${state.qualityMode === 'low' ? 'selected' : ''}>Low</option><option value="balanced" ${state.qualityMode === 'balanced' ? 'selected' : ''}>Balanced</option><option value="high" ${state.qualityMode === 'high' ? 'selected' : ''}>High</option></select></div>
         </section>
-        <aside class="settings-panel"><div class="about-mark">V</div><p class="eyebrow">ABOUT THIS CLIENT</p><h2>VexHub</h2><p>Your central hub for games from Vexuno Studio.</p><ul class="about-list"><li><span>Client version</span><strong>1.0.0 Preview</strong></li><li><span>Platform</span><strong>Web client</strong></li><li><span>Studio</span><strong>Vexuno Studio</strong></li><li><span>Account system</span><strong>Not connected</strong></li></ul>
+        <aside class="settings-panel"><div class="about-mark">V</div><p class="eyebrow">ABOUT THIS CLIENT</p><h2>VexHub</h2><p>Your central hub for games from Vexuno Studio.</p><ul class="about-list"><li><span>Client version</span><strong>1.3.0 Preview</strong></li><li><span>Platform</span><strong>Web client</strong></li><li><span>Studio</span><strong>Vexuno Studio</strong></li><li><span>Account system</span><strong>Not connected</strong></li></ul>
         </aside>
       </div>${footerTemplate()}`;
   }
@@ -146,6 +203,7 @@
       if (button.classList.contains('nav-item')) button.setAttribute('aria-current', button.dataset.page === state.page ? 'page' : 'false');
     });
     document.getElementById('library-count').textContent = state.favorites.length;
+    document.getElementById('mods-count').textContent = enabledModCount();
     document.getElementById('top-profile-name').textContent = state.profileName || 'Player';
     document.getElementById('top-avatar').textContent = (state.profileName || 'P').trim().charAt(0).toUpperCase() || 'P';
     document.documentElement.dataset.accent = state.accent;
@@ -154,7 +212,7 @@
 
   function render() {
     updateShell();
-    const templates = { dashboard: dashboardTemplate, discover: discoverTemplate, library: libraryTemplate, settings: settingsTemplate };
+    const templates = { dashboard: dashboardTemplate, discover: discoverTemplate, library: libraryTemplate, mods: modsTemplate, settings: settingsTemplate };
     pageContent.innerHTML = (templates[state.page] || dashboardTemplate)();
     pageContent.scrollTop = 0;
     if (state.page === 'settings') {
@@ -165,6 +223,15 @@
         storage.write('profileName', nextName);
         updateShell();
         toast('Profile name updated');
+      });
+      document.getElementById('sound-volume').addEventListener('input', event => {
+        state.soundVolume = Number(event.target.value);
+        storage.write('soundVolume', state.soundVolume);
+      });
+      document.getElementById('quality-mode').addEventListener('change', event => {
+        state.qualityMode = event.target.value;
+        storage.write('qualityMode', state.qualityMode);
+        toast(`Graphics quality: ${state.qualityMode}`);
       });
     }
   }
@@ -219,6 +286,67 @@
       render();
       toast(state.reduceMotion ? 'Reduced motion enabled' : 'Reduced motion disabled');
     }
+    if (actionButton.dataset.action === 'sound') {
+      state.soundEnabled = !state.soundEnabled;
+      storage.write('soundEnabled', state.soundEnabled);
+      render(); toast(state.soundEnabled ? 'Game sound enabled' : 'Game sound disabled');
+    }
+    if (actionButton.dataset.action === 'import-mod') modImportInput.click();
+    if (actionButton.dataset.action === 'install-sample') installSampleMod();
+    if (actionButton.dataset.action === 'toggle-mod') toggleMod(actionButton.dataset.modId);
+    if (actionButton.dataset.action === 'remove-mod') removeMod(actionButton.dataset.modId);
+    if (actionButton.dataset.action === 'export-mod') exportMod(actionButton.dataset.modId);
+    if (actionButton.dataset.action === 'export-all-mods') exportAllMods();
+  });
+
+  function installSampleMod() {
+    const existing = state.mods.findIndex(mod => mod.id === sampleMod.id);
+    const pkg = { ...sampleMod, target: [...sampleMod.target], installedAt: Date.now() };
+    if (existing >= 0) state.mods[existing] = { ...state.mods[existing], enabled: true };
+    else state.mods.push(pkg);
+    saveMods(); render(); toast('Mango Turbo Flight installed');
+  }
+  function toggleMod(id) {
+    const mod = state.mods.find(item => item.id === id); if (!mod) return;
+    mod.enabled = !mod.enabled; saveMods(); render(); toast(`${mod.name} ${mod.enabled ? 'enabled' : 'disabled'}`);
+  }
+  function removeMod(id) {
+    const mod = state.mods.find(item => item.id === id); if (!mod) return;
+    if (!window.confirm(`Remove ${mod.name} from MangoMod?`)) return;
+    state.mods = state.mods.filter(item => item.id !== id); saveMods(); render(); toast('Mod removed');
+  }
+  function downloadJSON(filename, data) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob); const link = document.createElement('a');
+    link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function exportMod(id) {
+    const mod = state.mods.find(item => item.id === id); if (!mod) return;
+    const { installedAt, ...pkg } = mod; downloadJSON(`${mod.id}.mangomod.json`, pkg); toast('Mod package exported');
+  }
+  function exportAllMods() {
+    if (!state.mods.length) { toast('There are no mods to export'); return; }
+    downloadJSON('mangomod-library.json', { format: 'mangomod-library', version: 1, mods: state.mods.map(({ installedAt, ...mod }) => mod) });
+    toast('Mod library exported');
+  }
+  modImportInput.addEventListener('change', async () => {
+    const file = modImportInput.files && modImportInput.files[0]; if (!file) return;
+    try {
+      if (file.size > MOD_LIMIT_BYTES) throw new Error('This mod package is larger than 160 KB.');
+      const parsed = JSON.parse(await file.text());
+      const packages = parsed && parsed.format === 'mangomod-library' ? parsed.mods : [parsed];
+      if (!Array.isArray(packages) || !packages.length || packages.length > 40) throw new Error('The package must contain between 1 and 40 mods.');
+      const validated = packages.map(validModPackage);
+      const total = JSON.stringify([...state.mods.filter(item => !validated.some(next => next.id === item.id)), ...validated]).length;
+      if (total > 150000) throw new Error('Your local MangoMod library is full. Remove some mods before importing more.');
+      for (const mod of validated) {
+        const index = state.mods.findIndex(item => item.id === mod.id);
+        if (index >= 0) state.mods[index] = mod; else state.mods.push(mod);
+      }
+      saveMods(); render(); toast(`${validated.length} mod${validated.length === 1 ? '' : 's'} imported`);
+    } catch (error) { toast(error.message || 'Could not import that mod package'); }
+    modImportInput.value = '';
   });
 
   searchInput.addEventListener('input', () => {
