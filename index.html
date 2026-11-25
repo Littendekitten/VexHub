@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0e0c" />
+  <meta name="description" content="VexHub is the home of games from Vexuno Studio." />
+  <title>VexHub — Vexuno Studio</title>
+  <link rel="icon" href="assets/vexhub-icon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#dashboard" aria-label="VexHub dashboard">
+        <span class="brand-mark" aria-hidden="true"><span>V</span></span>
+        <span class="brand-copy"><strong>VexHub</strong><small>BY VEXUNO STUDIO</small></span>
+      </a>
+
+      <div class="sidebar-divider"></div>
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="primary-nav">
+        <button class="nav-item active" data-page="dashboard" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+          <span>Dashboard</span><span class="nav-shortcut">01</span>
+        </button>
+        <button class="nav-item" data-page="discover" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 4.1 4.1M8.3 13.3l2.1-5 5 2.1-2.1 5z"/></svg>
+          <span>Discover</span><span class="nav-shortcut">02</span>
+        </button>
+        <button class="nav-item" data-page="library" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h6"/></svg>
+          <span>My library</span><span class="nav-count" id="library-count">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-tip">
+        <div class="tip-orbit"><span></span><span></span><span></span></div>
+        <p class="tip-kicker">A WORLD IN THE MAKING</p>
+        <p class="tip-copy">New adventures are on the horizon.</p>
+        <button class="text-button" data-page="discover" type="button">Explore what's next <span aria-hidden="true">↗</span></button>
+      </div>
+      <div class="sidebar-divider bottom-divider"></div>
+      <button class="nav-item utility-item" data-page="settings" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9L6.7 12l1.4-2.4 1.7.6a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9Z" transform="translate(-1 -1)"/></svg>
+        <span>Settings</span>
+      </button>
+      <div class="sidebar-version"><span class="status-dot"></span> VEXHUB PREVIEW <span>v1.0.0</span></div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>VEXUNO</span><span class="crumb-slash">/</span><strong id="breadcrumb-current">DASHBOARD</strong></div>
+        <div class="topbar-actions">
+          <label class="search-wrap" for="global-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16.2 16.2 4.1 4.1"/></svg>
+            <input id="global-search" type="search" placeholder="Search games" autocomplete="off" aria-label="Search games" />
+            <kbd>/</kbd>
+          </label>
+          <span class="topbar-divider"></span>
+          <button class="profile-chip" data-page="settings" type="button" aria-label="Open profile settings">
+            <span class="avatar" id="top-avatar">V</span><span class="profile-name" id="top-profile-name">Player</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div id="page-content" class="page-content" tabindex="-1">
+        <section class="welcome-row">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-line"></span> YOUR VEXUNO SPACE</p>
+            <h1>Welcome to <span>VexHub.</span></h1>
+            <p class="welcome-subtitle">One home for everything Vexuno. Find your next game, keep your favourites close, and stay in the loop.</p>
+          </div>
+          <div class="welcome-mark" aria-hidden="true">V<span>.</span></div>
+        </section>
+
+        <section class="hero-panel" aria-labelledby="hero-title">
+          <div class="hero-grid" aria-hidden="true"></div>
+          <div class="hero-glow" aria-hidden="true"></div>
+          <div class="hero-content">
+            <div class="hero-tag"><span class="pulse-dot"></span> THE VEXUNO UNIVERSE</div>
+            <p class="hero-overline">PLAY. EXPLORE. REPEAT.</p>
+            <h2 id="hero-title">Your next<br /><span>adventure</span> starts here.</h2>
+            <p class="hero-description">Discover games made by Vexuno Studio. Your next favourite is just around the corner.</p>
+            <div class="hero-actions">
+              <button class="button button-primary" data-page="discover" type="button">Explore games <span aria-hidden="true">↗</span></button>
+              <button class="button button-quiet" data-page="library" type="button">Open library <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-ring ring-one"></div><div class="art-ring ring-two"></div><div class="art-ring ring-three"></div>
+            <div class="art-core"><span>V</span></div>
+            <div class="art-spark spark-one"></div><div class="art-spark spark-two"></div><div class="art-spark spark-three"></div>
+            <div class="art-caption">VEXUNO<br /><span>STUDIO</span></div>
+          </div>
+          <div class="hero-index"><span>01</span><i></i><span>VEXHUB</span></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">HAND-PICKED BY VEXUNO</p><h2>In the spotlight</h2></div>
+            <button class="subtle-link" data-page="discover" type="button">View all <span aria-hidden="true">↗</span></button>
+          </div>
+          <div id="featured-game"></div>
+        </section>
+
+        <section class="bottom-grid">
+          <div class="section-card stats-card">
+            <div class="card-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h3>Your space, at a glance</h3></div><span class="mini-icon">▦</span></div>
+            <div class="stats-grid">
+              <div class="stat-item"><strong id="stat-games">01</strong><span>Games listed</span></div>
+              <div class="stat-item"><strong id="stat-saved">00</strong><span>Favourites</span></div>
+              <div class="stat-item"><strong>00</strong><span>Installed</span></div>
+            </div>
+          </div>
+          <div class="section-card update-card">
+            <div class="update-top"><span class="update-icon">✳</span><span class="update-label">FROM THE STUDIO</span></div>
+            <h3>Something new is taking shape.</h3>
+            <p>Vexuno is getting ready to bring its first game to the world. Keep an eye on this space.</p>
+            <button class="text-button" data-page="discover" type="button">See what's coming <span aria-hidden="true">↗</span></button>
+          </div>
+        </section>
+        <footer class="page-footer"><span>© <span id="current-year"></span> VEXUNO STUDIO</span><span>MADE FOR THE NEXT ADVENTURE <b>✳</b></span></footer>
+      </div>
+    </main>
+  </div>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
