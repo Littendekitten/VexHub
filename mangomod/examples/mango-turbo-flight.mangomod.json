@@ -1,0 +1,10 @@
+{
+  "id": "mango-turbo-flight",
+  "name": "Mango Turbo Flight",
+  "version": "1.0.0",
+  "author": "VexHub",
+  "description": "A punchier flight setup for SUNSET STRIKE 3D: faster movement and a quicker cannon.",
+  "target": ["sunset-strike-3d"],
+  "api": "mangomod-1",
+  "code": "MangoMod.on('game:ready', () => {\n  MangoMod.setSetting('playerSpeedMultiplier', 1.22);\n  MangoMod.setSetting('fireRateMultiplier', 1.16);\n  MangoMod.notify('Mango Turbo Flight loaded');\n});"
+}
