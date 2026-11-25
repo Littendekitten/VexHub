@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080914">
+  <meta name="description" content="SUNSET STRIKE 3D — an arcade space shooter by Vexuno Studio.">
+  <title>SUNSET STRIKE 3D — Vexuno Studio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="back-link" href="../../index.html" aria-label="Back to VexHub"><span>←</span> VEXHUB</a>
+      <div class="brand-lockup"><span class="brand-mark">V.</span><span><strong>SUNSET STRIKE 3D</strong><small>VEXUNO ORIGINAL · 001</small></span></div>
+      <div class="top-actions">
+        <span class="build-tag">0.1 BETA</span>
+        <button id="muteButton" class="icon-button" type="button" aria-label="Toggle sound" title="Mute (M)">♪</button>
+        <button id="pauseButton" class="icon-button" type="button" aria-label="Pause game" title="Pause (P)" disabled>Ⅱ</button>
+      </div>
+    </header>
+
+    <section class="intro-row">
+      <div><p class="eyebrow"><span class="live-dot"></span> ARCADE FLIGHT COMBAT</p><h1>Own the <span>sky.</span></h1><p class="intro-copy">The outer rim is under attack. Pilot your interceptor, protect the frontier, and take down the mothership.</p></div>
+      <div class="intro-side"><span>MISSION 001</span><strong>THE SUNSET FRONTIER</strong><small>ENDLESS ASSAULT · SOLO</small></div>
+    </section>
+
+    <section class="game-panel" aria-label="SUNSET STRIKE 3D game">
+      <div class="hud-top">
+        <div class="hud-stat"><span class="hud-label">SCORE</span><strong id="score">000000</strong></div>
+        <div class="hud-stat"><span class="hud-label">BEST</span><strong id="best">000000</strong></div>
+        <div class="hud-stat wave-stat"><span class="hud-label">WAVE</span><strong id="wave">01</strong></div>
+        <div class="hud-stat hull-stat"><span class="hud-label">HULL</span><strong id="hull">♥♥♥♥♥</strong></div>
+        <div class="hud-stat"><span class="hud-label">BOMBS</span><strong id="bombs">03</strong></div>
+        <div class="hud-stat weapon-stat"><span class="hud-label">WEAPON</span><strong>LV <span id="weapon">1</span></strong></div>
+      </div>
+      <div class="stage-wrap" id="stageWrap">
+        <div id="loading" class="loading-screen"><div class="loading-mark">V.</div><span>CALIBRATING FLIGHT SYSTEMS</span><div class="loading-track"><i></i></div></div>
+        <div id="bossBar" class="boss-bar hidden"><div class="boss-meta"><span>HOSTILE FLAGSHIP</span><span id="bossText">100%</span></div><div class="boss-track"><i id="bossFill"></i></div></div>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <p id="overlayKicker" class="overlay-kicker">VEXUNO ORIGINAL · 001</p>
+            <div class="overlay-emblem">✦</div>
+            <h2 id="overlayTitle">SUNSET <span>STRIKE</span> 3D</h2>
+            <p id="overlayCopy">The frontier is yours to defend. Clear the enemy waves and destroy the flagship.</p>
+            <div id="overlayStats" class="overlay-stats"><span><b>WASD</b> MOVE</span><span><b>SPACE</b> BOMB</span><span><b>M</b> MUTE</span></div>
+            <button id="startButton" class="primary-button" type="button">START MISSION <span>↗</span></button>
+            <small id="overlayFoot">AUTO-FIRE ENABLED · BEST SCORE SAVED LOCALLY</small>
+          </div>
+        </div>
+        <div id="toast" class="game-toast" aria-live="polite"></div>
+        <div class="stage-corner corner-tl">SS3D <span>·</span> FRONTIER</div>
+        <div class="stage-corner corner-br">VEXUNO STUDIO <span>·</span> 2026</div>
+      </div>
+      <div class="hud-bottom">
+        <p id="message">READY FOR DEPLOYMENT</p>
+        <div class="hud-bottom-right"><span class="status-indicator"></span> SYSTEMS NOMINAL <span class="separator">/</span> AUTO-FIRE</div>
+      </div>
+    </section>
+
+    <section class="below-grid">
+      <article class="info-card controls-card"><div class="card-heading"><span class="card-icon">⌘</span><div><p class="eyebrow">FLIGHT MANUAL</p><h3>Controls</h3></div></div>
+        <div class="control-list"><div><span class="keycap">W</span><span class="keycap">A</span><span class="keycap">S</span><span class="keycap">D</span><p>Move interceptor</p></div><div><span class="keycap wide">↑ ↓ ← →</span><p>Alternative movement</p></div><div><span class="keycap wide">SPACE</span><p>Launch shockwave bomb</p></div><div><span class="keycap">P</span><p>Pause mission</p></div><div><span class="keycap">M</span><p>Toggle sound</p></div></div>
+      </article>
+      <article class="info-card mission-card"><div class="card-heading"><span class="card-icon orange">✦</span><div><p class="eyebrow">MISSION BRIEFING</p><h3>Survive the assault.</h3></div></div><p>Enemy squadrons arrive in escalating waves. Collect weapon upgrades, keep your hull intact, and prepare for the flagship every few waves.</p><div class="mission-points"><span><i></i> Clear 14 hostiles to summon a boss</span><span><i></i> Pick up upgrades and repair kits</span><span><i></i> Bombs clear incoming enemy fire</span></div></article>
+      <article class="info-card pilot-card"><div class="card-heading"><span class="card-icon violet">◈</span><div><p class="eyebrow">PILOT RECORD</p><h3>Your flight log</h3></div></div><div class="record-line"><span>PERSONAL BEST</span><strong id="recordBest">000000</strong></div><div class="record-line"><span>MISSIONS COMPLETED</span><strong id="missions">00</strong></div><div class="record-line"><span>HOSTILES DOWNED</span><strong id="kills">000</strong></div><button id="resetRecord" class="text-button" type="button">Reset local record <span>↗</span></button></article>
+    </section>
+
+    <div class="mobile-controls" aria-label="Touch controls">
+      <div class="dpad"><button data-move="up" aria-label="Move up">▲</button><div><button data-move="left" aria-label="Move left">◀</button><button data-move="down" aria-label="Move down">▼</button><button data-move="right" aria-label="Move right">▶</button></div></div>
+      <button id="touchBomb" class="bomb-button" type="button"><span>✦</span>BOMB</button>
+    </div>
+    <footer class="page-footer"><a href="../../index.html">← BACK TO VEXHUB</a><span>© 2026 VEXUNO STUDIO · SUNSET STRIKE 3D 0.1 BETA</span><span>BUILT FOR THE FRONTIER <b>✳</b></span></footer>
+  </main>
+</body>
+</html>
